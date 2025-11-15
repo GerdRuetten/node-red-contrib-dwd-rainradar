@@ -1,0 +1,50 @@
+{
+  "paletteLabel": "DWD-Regenradar",
+
+  "label": {
+    "defaultName": "DWD-Regenradar",
+    "name": "Name",
+    "mode": "Gebietsmodus",
+    "modeDe": "Ganz Deutschland",
+    "modeBbox": "Bounding Box",
+    "modePoint": "Punkt + Radius",
+    "latMin": "Min. Breite",
+    "latMax": "Max. Breite",
+    "lonMin": "Min. Länge",
+    "lonMax": "Max. Länge",
+    "lat": "Breite",
+    "lon": "Länge",
+    "radius": "Radius (km)",
+    "autoRefresh": "Auto-Refresh (Sek.)",
+    "fetchOnDeploy": "Beim Deploy abrufen",
+    "outputOptions": "Ausgabe-Optionen",
+    "outputSummary": "Zusammenfassung",
+    "outputGrid": "Vollständiges Raster",
+    "outputImage": "Bild (PNG/Base64)",
+    "diag": "Diagnose"
+  },
+
+  "ui": {
+    "modeTip": "Legt fest, wie das Interessensgebiet definiert wird.",
+    "bboxTip": "Bounding Box in Dezimalgrad (WGS84).",
+    "pointTip": "Zentrumskoordinate in Dezimalgrad (WGS84).",
+    "autoRefreshTip": "Intervall in Sekunden. 0 = deaktiviert.",
+    "summaryTip": "Aggregierte Kennwerte wie Max/Ø/Abdeckung.",
+    "gridTip": "Vollauflösendes Raster – kann sehr groß sein.",
+    "imageTip": "Base64-PNG für Dashboards oder UI-Templates.",
+    "diagTip": "Schreibt zusätzliche Diagnosemeldungen ins Node-RED-Log.",
+    "hintHeader": "Hinweis",
+    "hintText": "Radardaten unterliegen Qualitätsprüfungen und können Artefakte enthalten. Details siehe DWD-Dokumentation."
+  },
+
+  "runtime": {
+    "statusLoading": "lade…",
+    "statusReady": "bereit",
+    "statusOk": "__count__ Zellen",
+    "statusError": "Fehler",
+
+    "errorFetch": "Fehler beim Abrufen der Radardaten: __error__",
+    "errorParse": "Fehler beim Interpretieren der Radardaten: __error__",
+    "errorConfig": "Ungültige Konfiguration: __error__"
+  }
+}

@@ -1,0 +1,20 @@
+# Node build artefacts
+node_modules/
+npm-debug.log
+package-lock.json
+
+# OS files
+.DS_Store
+
+# JetBrains/WebStorm
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Node-RED internal data if accidentally copied
+data/
+
+# Release artifacts
+dist/

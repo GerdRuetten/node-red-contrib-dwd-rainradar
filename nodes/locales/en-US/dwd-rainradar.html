@@ -1,0 +1,107 @@
+<script type="text/html" data-help-name="dwd-rainradar">
+    <p>
+        The <b>DWD Rain Radar</b> node (RADOLAN) provides access to precipitation radar
+        data from the German Weather Service (DWD). It is intended for use in
+        Node-RED flows to analyse current rain intensity over Germany or a
+        selected region.
+    </p>
+
+    <h3>Configuration</h3>
+    <dl>
+        <dt>Name</dt>
+        <dd>
+            Optional name shown in the Node-RED editor. If empty, a default label is used.
+        </dd>
+
+        <dt>Area mode</dt>
+        <dd>
+            Defines how the area of interest is specified:
+            <ul>
+                <li><b>Whole Germany</b>: uses the full radar domain</li>
+                <li><b>Bounding box</b>: min/max latitude and longitude (WGS84)</li>
+                <li><b>Point + radius</b>: center coordinate and radius in kilometres</li>
+            </ul>
+        </dd>
+
+        <dt>Auto-refresh (sec)</dt>
+        <dd>
+            Interval in seconds for automatic background updates.
+            Use <code>0</code> to disable auto-refresh.
+        </dd>
+
+        <dt>Fetch on deploy</dt>
+        <dd>
+            If enabled, the node fetches radar data immediately after the flow
+            is deployed.
+        </dd>
+
+        <dt>Output options</dt>
+        <dd>
+            Controls the structure of <code>msg.payload</code>:
+            <ul>
+                <li><b>Summary</b> – aggregated values such as max/avg intensity and coverage</li>
+                <li><b>Full grid</b> – full resolution raster values (may be large)</li>
+                <li><b>Image (PNG/Base64)</b> – encoded radar image for dashboards or templates</li>
+            </ul>
+        </dd>
+
+        <dt>Diagnostics</dt>
+        <dd>
+            When enabled, additional diagnostic information is written to the Node-RED log.
+        </dd>
+    </dl>
+
+    <h3>Inputs</h3>
+    <p>
+        Any incoming message triggers a radar fetch for the configured area and time mode.
+        The content of the input message is not evaluated in the initial version and is
+        only used as a trigger.
+    </p>
+
+    <h3>Outputs</h3>
+    <p>
+        The node emits a single message with the radar information:
+    </p>
+    <dl>
+        <dt>msg.payload.meta</dt>
+        <dd>
+            Contains metadata such as source, timestamp and mode.
+        </dd>
+
+        <dt>msg.payload.summary</dt>
+        <dd>
+            Present if <b>Summary</b> is enabled. Provides aggregated information
+            about precipitation in the area of interest.
+        </dd>
+
+        <dt>msg.payload.grid</dt>
+        <dd>
+            Present if <b>Full grid</b> is enabled. Contains a raster representation
+            of the precipitation field (width, height, values).
+        </dd>
+
+        <dt>msg.payload.image</dt>
+        <dd>
+            Present if <b>Image (PNG/Base64)</b> is enabled. Provides an encoded
+            radar image that can be rendered in dashboards or templates.
+        </dd>
+    </dl>
+
+    <h3>Status</h3>
+    <p>
+        The node reports its internal state via the status text below the node:
+    </p>
+    <ul>
+        <li><b>loading…</b> – radar data is being fetched</li>
+        <li><b>ready</b> – idle, waiting for input or auto-refresh</li>
+        <li><b>N cells</b> – number of grid cells used in the last result</li>
+        <li><b>error</b> – an error occurred during fetch or processing</li>
+    </ul>
+
+    <h3>Notes</h3>
+    <p>
+        This initial version uses a placeholder implementation and does not yet
+        query the real DWD RADOLAN product. A future version will add direct
+        integration with the official OpenData radar endpoints.
+    </p>
+</script>

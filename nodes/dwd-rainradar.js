@@ -8,6 +8,7 @@ module.exports = function (RED) {
         const t = (key, opts) =>
             RED._("node-red-contrib-dwd-rainradar/dwd-rainradar:" + key, opts);
 
+        // Konfiguration aus dem Editor (defensiv)
         node.mode          = config.mode || "de";
         node.latMin        = config.latMin;
         node.latMax        = config.latMax;
@@ -17,13 +18,25 @@ module.exports = function (RED) {
         node.lon           = config.lon;
         node.radius        = config.radius;
         node.autoRefresh   = Number(config.autoRefresh || 0);
-        node.fetchOnDeploy = config.fetchOnDeploy !== false;
         node.outputSummary = config.outputSummary !== false;
         node.outputGrid    = !!config.outputGrid;
         node.outputImage   = !!config.outputImage;
         node.diag          = !!config.diag;
 
+        // fetchOnDeploy: sauber auf Boolean bringen, Default = true
+        if (typeof config.fetchOnDeploy === "undefined") {
+            node.fetchOnDeploy = true;
+        } else {
+            node.fetchOnDeploy = !!config.fetchOnDeploy;
+        }
+
         let timer = null;
+
+        function diagLog(msg) {
+            if (node.diag) {
+                node.log("[diag] " + msg);
+            }
+        }
 
         function setStatus(text, color = "blue", shape = "dot") {
             node.status({ fill: color, shape, text });
@@ -34,7 +47,7 @@ module.exports = function (RED) {
 
             try {
                 // TODO: echte DWD-Radar-Integration (RADOLAN)
-                // Hier erstmal Dummy-Daten, damit der Node nutzbar ist.
+                // Dummy-Daten für Entwicklung/Tests
 
                 const now = new Date().toISOString();
 
@@ -70,12 +83,16 @@ module.exports = function (RED) {
                     };
                 }
 
-                setStatus(t("runtime.statusOk", { count: node.outputGrid ? 100 : 0 }), "green", "dot");
+                const cellCount = node.outputGrid ? 100 : 0;
+                setStatus(t("runtime.statusOk", { count: cellCount }), "green", "dot");
+                diagLog("fetchRadar() completed, cells=" + cellCount);
+
                 node.send({ payload });
             } catch (err) {
                 const msg = err && err.message ? err.message : String(err);
                 node.error(t("runtime.errorFetch", { error: msg }));
                 setStatus(t("runtime.statusError"), "red", "ring");
+                diagLog("fetchRadar() error: " + msg);
             }
         }
 
@@ -87,20 +104,51 @@ module.exports = function (RED) {
 
             const s = Number(node.autoRefresh || 0);
             if (s > 0) {
+                diagLog("Auto-refresh enabled: " + s + "s");
                 timer = setInterval(fetchRadar, s * 1000);
+            } else {
+                diagLog("Auto-refresh disabled");
             }
         }
 
-        node.on("input", fetchRadar);
+        node.on("input", (msg) => {
+            diagLog("Input received, triggering fetchRadar()");
+            fetchRadar();
+        });
 
         node.on("close", () => {
-            if (timer) clearInterval(timer);
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            diagLog("Node closed");
         });
+
+        // Constructor läuft
+        diagLog(
+            "Node created, fetchOnDeploy=" +
+            node.fetchOnDeploy +
+            ", autoRefresh=" +
+            node.autoRefresh
+        );
 
         schedule();
 
+        // WICHTIG: Fetch nicht synchron im Constructor, sondern im nächsten Tick
+        // Das ist robuster im Zusammenspiel mit Deploy/Flow-Init.
         if (node.fetchOnDeploy) {
-            fetchRadar();
+            diagLog("Fetch on deploy is enabled, scheduling immediate fetch");
+            try {
+                if (typeof setImmediate === "function") {
+                    setImmediate(fetchRadar);
+                } else {
+                    process.nextTick(fetchRadar);
+                }
+            } catch (e) {
+                // Fallback, falls oben aus irgendeinem Grund schiefgeht
+                diagLog("Failed to schedule immediate fetch, calling directly");
+                fetchRadar();
+            }
         } else {
             setStatus(t("runtime.statusReady"), "blue", "ring");
         }

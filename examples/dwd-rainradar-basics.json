@@ -1,0 +1,88 @@
+[
+  {
+    "id": "f1b9c6c8b4a1e001",
+    "type": "tab",
+    "label": "DWD Rain Radar - Basic Example",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "b7a0f6b9b2f1a001",
+    "type": "inject",
+    "z": "f1b9c6c8b4a1e001",
+    "name": "Trigger rain radar",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 200,
+    "y": 120,
+    "wires": [
+      [
+        "d3b8b3fd9b4ae001"
+      ]
+    ]
+  },
+  {
+    "id": "d3b8b3fd9b4ae001",
+    "type": "dwd-rainradar",
+    "z": "f1b9c6c8b4a1e001",
+    "name": "",
+    "mode": "de",
+    "latMin": "",
+    "latMax": "",
+    "lonMin": "",
+    "lonMax": "",
+    "lat": "",
+    "lon": "",
+    "radius": "",
+    "autoRefresh": "0",
+    "fetchOnDeploy": true,
+    "outputSummary": true,
+    "outputGrid": true,
+    "outputImage": false,
+    "diag": false,
+    "x": 440,
+    "y": 120,
+    "wires": [
+      [
+        "e4f5f3a1c3b7e001"
+      ]
+    ]
+  },
+  {
+    "id": "e4f5f3a1c3b7e001",
+    "type": "debug",
+    "z": "f1b9c6c8b4a1e001",
+    "name": "Radar result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 690,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "ad2c6b5468f8e001",
+    "type": "comment",
+    "z": "f1b9c6c8b4a1e001",
+    "name": "DWD Rain Radar - Basic usage",
+    "info": "This example demonstrates the basic usage of the DWD Rain Radar node:\n\n- \"Fetch on deploy\" is enabled, so an initial result is produced after deployment.\n- The inject node can be used to trigger additional fetches.\n- The debug node shows the resulting payload (meta, summary and grid fields).",
+    "x": 320,
+    "y": 60,
+    "wires": []
+  }
+]

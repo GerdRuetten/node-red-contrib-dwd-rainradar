@@ -23,6 +23,9 @@ module.exports = function (RED) {
         node.outputImage   = !!config.outputImage;
         node.diag          = !!config.diag;
 
+        // NEU: Backend-URL (optional)
+        node.backendUrl    = (config.backendUrl || "").trim();
+
         // fetchOnDeploy: sauber auf Boolean bringen, Default = true
         if (typeof config.fetchOnDeploy === "undefined") {
             node.fetchOnDeploy = true;
@@ -46,51 +49,83 @@ module.exports = function (RED) {
             setStatus(t("runtime.statusLoading"));
 
             try {
-                // TODO: echte DWD-Radar-Integration (RADOLAN)
-                // Dummy-Daten für Entwicklung/Tests
+                let payload;
+                const nowIso = new Date().toISOString();
 
-                const now = new Date().toISOString();
+                if (node.backendUrl) {
+                    // ECHTER Modus: Backend-Endpoint wird aufgerufen
+                    diagLog("Fetching rain radar from backend: " + node.backendUrl);
+                    const res = await axios.get(node.backendUrl, { timeout: 15000 });
 
-                const payload = {
-                    meta: {
-                        source: "DWD Rain Radar (dummy)",
-                        timestamp: now,
-                        mode: node.mode
+                    payload = res.data || {};
+                    if (typeof payload !== "object" || payload === null) {
+                        payload = {};
                     }
-                };
 
-                if (node.outputSummary) {
-                    payload.summary = {
-                        hasRain: true,
-                        maxIntensity: 12.3,
-                        avgIntensity: 1.7,
-                        coveragePercent: 42.0
+                    // Minimal-Normalisierung, falls Backend nicht alles liefert
+                    if (!payload.meta) {
+                        payload.meta = {};
+                    }
+                    if (!payload.meta.timestamp) {
+                        payload.meta.timestamp = nowIso;
+                    }
+                    if (!payload.meta.source) {
+                        payload.meta.source = "DWD Rain Radar (backend)";
+                    }
+                    if (!payload.meta.mode) {
+                        payload.meta.mode = node.mode;
+                    }
+                } else {
+                    // DUMMY: Interne Testdaten (aktuelles Verhalten)
+                    diagLog("Using built-in dummy implementation (no backendUrl configured)");
+
+                    payload = {
+                        meta: {
+                            source: "DWD Rain Radar (dummy)",
+                            timestamp: nowIso,
+                            mode: node.mode
+                        }
                     };
+
+                    if (node.outputSummary) {
+                        payload.summary = {
+                            hasRain: true,
+                            maxIntensity: 12.3,
+                            avgIntensity: 1.7,
+                            coveragePercent: 42.0
+                        };
+                    }
+
+                    if (node.outputGrid) {
+                        payload.grid = {
+                            width: 10,
+                            height: 10,
+                            values: Array.from({ length: 100 }, (_, i) => (i % 5 === 0 ? 5 : 0))
+                        };
+                    }
+
+                    if (node.outputImage) {
+                        payload.image = {
+                            mimeType: "image/png",
+                            data: null // später: Base64-Bild
+                        };
+                    }
                 }
 
-                if (node.outputGrid) {
-                    payload.grid = {
-                        width: 10,
-                        height: 10,
-                        values: Array.from({ length: 100 }, (_, i) => (i % 5 === 0 ? 5 : 0))
-                    };
-                }
+                const cellCount =
+                    payload &&
+                    payload.grid &&
+                    Array.isArray(payload.grid.values)
+                        ? payload.grid.values.length
+                        : 0;
 
-                if (node.outputImage) {
-                    payload.image = {
-                        mimeType: "image/png",
-                        data: null // später: Base64-Bild
-                    };
-                }
-
-                const cellCount = node.outputGrid ? 100 : 0;
                 setStatus(t("runtime.statusOk", { count: cellCount }), "green", "dot");
                 diagLog("fetchRadar() completed, cells=" + cellCount);
 
                 node.send({ payload });
             } catch (err) {
                 const msg = err && err.message ? err.message : String(err);
-                node.error(t("runtime.errorFetch", { error: msg }));
+                node.error(t("runtime.errorFetch", { error: msg }), { error: msg });
                 setStatus(t("runtime.statusError"), "red", "ring");
                 diagLog("fetchRadar() error: " + msg);
             }
@@ -124,18 +159,18 @@ module.exports = function (RED) {
             diagLog("Node closed");
         });
 
-        // Constructor läuft
         diagLog(
             "Node created, fetchOnDeploy=" +
             node.fetchOnDeploy +
             ", autoRefresh=" +
-            node.autoRefresh
+            node.autoRefresh +
+            ", backendUrl=" +
+            (node.backendUrl || "<empty>")
         );
 
         schedule();
 
-        // WICHTIG: Fetch nicht synchron im Constructor, sondern im nächsten Tick
-        // Das ist robuster im Zusammenspiel mit Deploy/Flow-Init.
+        // Fetch nicht synchron im Constructor, sondern im nächsten Tick
         if (node.fetchOnDeploy) {
             diagLog("Fetch on deploy is enabled, scheduling immediate fetch");
             try {
@@ -145,7 +180,6 @@ module.exports = function (RED) {
                     process.nextTick(fetchRadar);
                 }
             } catch (e) {
-                // Fallback, falls oben aus irgendeinem Grund schiefgeht
                 diagLog("Failed to schedule immediate fetch, calling directly");
                 fetchRadar();
             }

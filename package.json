@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-dwd-rainradar",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.1-beta.1",
   "description": "A Node-RED node to access the German Weather Service (DWD) rain radar data (RADOLAN). Supports summary values, full grid extraction and optional image output.",
   "keywords": [
     "node-red",

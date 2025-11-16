@@ -1,256 +1,158 @@
 <script type="text/html" data-template-name="dwd-rainradar">
     <div class="form-row">
         <label for="node-input-name">
-            <i class="fa fa-tag"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.name">Name</span>
+            <span data-i18n="dwd-rainradar.label.name"></span>
         </label>
-        <input type="text" id="node-input-name" placeholder="DWD Rain Radar">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]dwd-rainradar.placeholder.name">
     </div>
 
     <div class="form-row">
         <label for="node-input-mode">
-            <i class="fa fa-globe"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.mode">Area mode</span>
+            <span data-i18n="dwd-rainradar.label.mode"></span>
         </label>
         <select id="node-input-mode">
-            <option value="de"
-                    data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.modeDe">
-                Whole Germany
-            </option>
-            <option value="bbox"
-                    data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.modeBbox">
-                Bounding box
-            </option>
-            <option value="point"
-                    data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.modePoint">
-                Point + radius
-            </option>
+            <option value="de" data-i18n="dwd-rainradar.label.modeDe"></option>
+            <option value="bbox" data-i18n="dwd-rainradar.label.modeBbox"></option>
+            <option value="point" data-i18n="dwd-rainradar.label.modePoint"></option>
         </select>
-        <div class="form-tips"
-             data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.modeTip">
-            Choose how to define the area of interest.
-        </div>
     </div>
 
-    <div class="form-row dwd-rr-bbox">
+    <div class="form-row form-row-bbox">
         <label>
-            <i class="fa fa-square-o"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.modeBbox">Bounding box</span>
+            <span data-i18n="dwd-rainradar.label.latMin"></span>
         </label>
-        <div style="margin-left:200px;">
-            <div>
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.latMin">Min latitude</span>:
-                <input type="number" id="node-input-latMin" step="0.01" style="width:120px;">
-                &nbsp;
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.latMax">Max latitude</span>:
-                <input type="number" id="node-input-latMax" step="0.01" style="width:120px;">
-            </div>
-            <div style="margin-top:5px;">
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.lonMin">Min longitude</span>:
-                <input type="number" id="node-input-lonMin" step="0.01" style="width:120px;">
-                &nbsp;
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.lonMax">Max longitude</span>:
-                <input type="number" id="node-input-lonMax" step="0.01" style="width:120px;">
-            </div>
-            <div class="form-tips"
-                 data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.bboxTip">
-                Bounding box in decimal degrees (WGS84).
-            </div>
-        </div>
+        <input type="text" id="node-input-latMin" style="width: 120px;">
+        <label style="margin-left: 10px;">
+            <span data-i18n="dwd-rainradar.label.latMax"></span>
+        </label>
+        <input type="text" id="node-input-latMax" style="width: 120px;">
     </div>
 
-    <div class="form-row dwd-rr-point">
+    <div class="form-row form-row-bbox">
         <label>
-            <i class="fa fa-map-marker"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.modePoint">Point + radius</span>
+            <span data-i18n="dwd-rainradar.label.lonMin"></span>
         </label>
-        <div style="margin-left:200px;">
-            <div>
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.lat">Latitude</span>:
-                <input type="number" id="node-input-lat" step="0.01" style="width:120px;">
-                &nbsp;
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.lon">Longitude</span>:
-                <input type="number" id="node-input-lon" step="0.01" style="width:120px;">
-            </div>
-            <div style="margin-top:5px;">
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.radius">Radius (km)</span>:
-                <input type="number" id="node-input-radius" step="1" min="1" style="width:120px;">
-            </div>
-            <div class="form-tips"
-                 data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.pointTip">
-                Center coordinate in decimal degrees (WGS84).
-            </div>
-        </div>
+        <input type="text" id="node-input-lonMin" style="width: 120px;">
+        <label style="margin-left: 10px;">
+            <span data-i18n="dwd-rainradar.label.lonMax"></span>
+        </label>
+        <input type="text" id="node-input-lonMax" style="width: 120px;">
     </div>
 
-    <hr/>
+    <div class="form-row form-row-point">
+        <label for="node-input-lat">
+            <span data-i18n="dwd-rainradar.label.lat"></span>
+        </label>
+        <input type="text" id="node-input-lat" style="width: 120px;">
+        <label for="node-input-lon" style="margin-left: 10px;">
+            <span data-i18n="dwd-rainradar.label.lon"></span>
+        </label>
+        <input type="text" id="node-input-lon" style="width: 120px;">
+    </div>
+
+    <div class="form-row form-row-point">
+        <label for="node-input-radius">
+            <span data-i18n="dwd-rainradar.label.radius"></span>
+        </label>
+        <input type="text" id="node-input-radius" style="width: 120px;">
+    </div>
 
     <div class="form-row">
         <label for="node-input-autoRefresh">
-            <i class="fa fa-refresh"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.autoRefresh">
-        Auto-refresh (sec)
-      </span>
+            <span data-i18n="dwd-rainradar.label.autoRefresh"></span>
         </label>
-        <input type="number" id="node-input-autoRefresh" min="0" step="10" placeholder="0 = disabled">
-        <div class="form-tips"
-             data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.autoRefreshTip">
-            Interval in seconds. 0 = disabled.
-        </div>
+        <input type="number" id="node-input-autoRefresh" style="width: 100px;" min="0">
     </div>
 
     <div class="form-row">
-        <label for="node-input-fetchOnDeploy">
-            <i class="fa fa-bolt"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.fetchOnDeploy">
-        Fetch on deploy
-      </span>
+        <label for="node-input-backendUrl">
+            <span data-i18n="dwd-rainradar.label.backendUrl"></span>
         </label>
-        <input type="checkbox" id="node-input-fetchOnDeploy" style="width:auto;">
+        <input type="text" id="node-input-backendUrl" style="width: 100%;"
+               data-i18n="[placeholder]dwd-rainradar.placeholder.backendUrl">
+        <p class="form-tips" data-i18n="dwd-rainradar.help.backendUrl"></p>
     </div>
 
     <div class="form-row">
-        <label>
-            <i class="fa fa-list"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.outputOptions">
-        Output options
-      </span>
-        </label>
-        <div style="margin-left:200px;">
-            <div>
-                <input type="checkbox" id="node-input-outputSummary" style="width:auto;">
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.outputSummary">
-          Summary
-        </span>
-                <div class="form-tips"
-                     data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.summaryTip">
-                    Aggregated values like max/avg/coverage.
-                </div>
-            </div>
-            <div style="margin-top:5px;">
-                <input type="checkbox" id="node-input-outputGrid" style="width:auto;">
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.outputGrid">
-          Full grid
-        </span>
-                <div class="form-tips"
-                     data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.gridTip">
-                    Full resolution grid – may be large in size.
-                </div>
-            </div>
-            <div style="margin-top:5px;">
-                <input type="checkbox" id="node-input-outputImage" style="width:auto;">
-                <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.outputImage">
-          Image (PNG/Base64)
-        </span>
-                <div class="form-tips"
-                     data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.imageTip">
-                    Base64 PNG for dashboards or UI templates.
-                </div>
-            </div>
-        </div>
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-fetchOnDeploy" style="display:inline-block; width:auto; vertical-align:baseline;">
+        <label for="node-input-fetchOnDeploy" style="width:auto;" data-i18n="dwd-rainradar.label.fetchOnDeploy"></label>
     </div>
 
     <div class="form-row">
-        <label for="node-input-diag">
-            <i class="fa fa-bug"></i>
-            <span data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:label.diag">
-        Diagnostics
-      </span>
-        </label>
-        <input type="checkbox" id="node-input-diag" style="width:auto;">
-        <span style="margin-left:6px;"
-              data-i18n="node-red-contrib-dwd-rainradar/dwd-rainradar:ui.diagTip">
-      Write additional diagnostics to the Node-RED log.
-    </span>
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-outputSummary" style="display:inline-block; width:auto; vertical-align:baseline;">
+        <label for="node-input-outputSummary" style="width:auto;" data-i18n="dwd-rainradar.label.outputSummary"></label>
+    </div>
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-outputGrid" style="display:inline-block; width:auto; vertical-align:baseline;">
+        <label for="node-input-outputGrid" style="width:auto;" data-i18n="dwd-rainradar.label.outputGrid"></label>
+    </div>
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-outputImage" style="display:inline-block; width:auto; vertical-align:baseline;">
+        <label for="node-input-outputImage" style="width:auto;" data-i18n="dwd-rainradar.label.outputImage"></label>
+    </div>
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-diag" style="display:inline-block; width:auto; vertical-align:baseline;">
+        <label for="node-input-diag" style="width:auto;" data-i18n="dwd-rainradar.label.diag"></label>
     </div>
 </script>
 
 <script type="text/javascript">
-    (function () {
-        RED.nodes.registerType("dwd-rainradar", {
-            category: "input",
-            color: "#d7e6ff",
-            icon: "font-awesome/fa-tint",
-
-            paletteLabel: function () {
-                return RED._("node-red-contrib-dwd-rainradar/dwd-rainradar:paletteLabel")
-                    || "DWD Rain Radar";
-            },
-
-            defaults: {
-                name:           { value: "" },
-                mode:           { value: "de" },
-                latMin:         { value: null },
-                latMax:         { value: null },
-                lonMin:         { value: null },
-                lonMax:         { value: null },
-                lat:            { value: null },
-                lon:            { value: null },
-                radius:         { value: null },
-                autoRefresh:    { value: 0 },
-                fetchOnDeploy:  { value: true },
-                outputSummary:  { value: true },
-                outputGrid:     { value: false },
-                outputImage:    { value: false },
-                diag:           { value: false }
-            },
-
-            inputs: 1,
-            outputs: 1,
-
-            label: function () {
-                return this.name
-                    || RED._("node-red-contrib-dwd-rainradar/dwd-rainradar:label.defaultName")
-                    || "DWD Rain Radar";
-            },
-
-            labelStyle: function () {
-                return this.name ? "node_label_italic" : "";
-            },
-
-            oneditprepare: function () {
-                function updateModeVisibility() {
-                    var mode = $("#node-input-mode").val();
-                    $(".dwd-rr-bbox").toggle(mode === "bbox");
-                    $(".dwd-rr-point").toggle(mode === "point");
-                }
-
-                $("#node-input-mode").on("change", updateModeVisibility);
-                updateModeVisibility();
-
-                $("#node-input-autoRefresh").attr({ min: 0, step: 10 });
+    RED.nodes.registerType("dwd-rainradar", {
+        category: "input",
+        color: "#4c97ff",
+        defaults: {
+            name:          { value: "" },
+            mode:          { value: "de" },
+            latMin:        { value: "" },
+            latMax:        { value: "" },
+            lonMin:        { value: "" },
+            lonMax:        { value: "" },
+            lat:           { value: "" },
+            lon:           { value: "" },
+            radius:        { value: "" },
+            autoRefresh:   { value: 0 },
+            fetchOnDeploy: { value: true },
+            outputSummary: { value: true },
+            outputGrid:    { value: true },
+            outputImage:   { value: false },
+            backendUrl:    { value: "" },
+            diag:          { value: false }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-cloud-rain",
+        label: function () {
+            if (this.name && this.name.trim() !== "") {
+                return this.name;
             }
-        });
-    })();
+            // Fallback auf lokalisierten Default-Label-Text
+            if (this._ && this._("dwd-rainradar.label.defaultName") !== "dwd-rainradar.label.defaultName") {
+                return this._("dwd-rainradar.label.defaultName");
+            }
+            return "DWD Rain Radar";
+        },
+        labelStyle: function () {
+            return (this.name && this.name.trim() !== "") ? "node-label" : "node-label-italic";
+        },
+        oneditprepare: function () {
+            var $mode = $("#node-input-mode");
+
+            function updateModeVisibility() {
+                var mode = $mode.val();
+                $(".form-row-bbox").toggle(mode === "bbox");
+                $(".form-row-point").toggle(mode === "point");
+            }
+
+            $mode.on("change", updateModeVisibility);
+            updateModeVisibility();
+        }
+    });
 </script>
-
-<style>
-    .form-row label {
-        width: 200px;
-        display: inline-block;
-        vertical-align: top;
-    }
-
-    .form-row input[type="text"],
-    .form-row input[type="number"],
-    .form-row select {
-        width: calc(100% - 210px);
-    }
-
-    .form-tips {
-        font-size: 0.85em;
-        color: #666;
-        margin-left: 200px;
-        line-height: 1.4em;
-    }
-
-    .form-tips code {
-        font-family: monospace;
-        word-break: break-all;
-    }
-
-    .dwd-rr-bbox,
-    .dwd-rr-point {
-        margin-top: 5px;
-    }
-</style>

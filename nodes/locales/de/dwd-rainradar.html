@@ -1,107 +1,91 @@
-<script type="text/html" data-help-name="dwd-rainradar">
+<script type="text/x-red" data-help-name="dwd-rainradar">
     <p>
-        Der Node <b>DWD-Regenradar</b> (RADOLAN) stellt Niederschlagsradardaten
-        des Deutschen Wetterdienstes (DWD) für Node-RED-Flows zur Verfügung.
-        Er eignet sich, um die aktuelle Regenintensität über Deutschland oder
-        in einer ausgewählten Region zu analysieren.
+        Der <b>DWD-Regenradar</b>-Node stellt aktuelle Niederschlagsinformationen des
+        Deutschen Wetterdienstes (DWD) zur Verfügung. Er ist dafür ausgelegt, mit den
+        RADOLAN-Radarprodukten zu arbeiten und eine vereinfachte JSON-Struktur für
+        Node-RED-Flows bereitzustellen.
     </p>
 
     <h3>Konfiguration</h3>
+
     <dl>
         <dt>Name</dt>
         <dd>
-            Optionaler Anzeigename im Node-RED-Editor. Wenn leer, wird eine
-            Standardbezeichnung verwendet.
+            Optionaler Anzeigename für den Node. Wenn leer, wird eine Standardbezeichnung verwendet.
         </dd>
 
-        <dt>Gebietsmodus</dt>
+        <dt>Gebietsauswahl</dt>
         <dd>
-            Legt fest, wie das Interessensgebiet definiert wird:
+            Legt fest, wie das betrachtete Gebiet ausgewählt wird:
             <ul>
-                <li><b>Ganz Deutschland</b>: gesamter Radarbereich</li>
-                <li><b>Bounding Box</b>: min./max. Breite und Länge (WGS84)</li>
-                <li><b>Punkt + Radius</b>: Zentrumskoordinate und Radius in Kilometern</li>
+                <li><b>Ganz Deutschland</b> – verwendet das gesamte DWD-Radargebiet.</li>
+                <li><b>Bounding Box</b> – Minimal- und Maximal-Breitengrad sowie -Längengrad angeben.</li>
+                <li><b>Punkt + Radius</b> – Breitengrad, Längengrad und Radius in km angeben.</li>
             </ul>
         </dd>
 
-        <dt>Auto-Refresh (Sek.)</dt>
+        <dt>Auto-Aktualisierung (Sek.)</dt>
         <dd>
-            Intervall in Sekunden für automatische Aktualisierungen.
-            Der Wert <code>0</code> deaktiviert den Auto-Refresh.
+            Intervall in Sekunden für automatische Aktualisierungen. Der Wert
+            <code>0</code> deaktiviert die Auto-Aktualisierung. Ein Wert &gt; 0 löst
+            periodische Abrufe aus.
+        </dd>
+
+        <dt>Backend-URL</dt>
+        <dd>
+            Optionale HTTP-URL, die Regenradar-Daten als JSON zurückliefert. Ist dieses Feld
+            gesetzt, ruft der Node die hinterlegte URL auf und verwendet die Antwort als
+            <code>msg.payload</code>. Erwartet wird eine Struktur wie:
+            <pre>{
+  "meta": { ... },
+  "summary": { ... },
+  "grid": { ... },
+  "image": { ... }
+}</pre>
+            Wenn das Feld leer bleibt, nutzt der Node eine interne Dummy-Implementierung für
+            Entwicklung und Tests.
         </dd>
 
         <dt>Beim Deploy abrufen</dt>
         <dd>
-            Wenn aktiv, ruft der Node unmittelbar nach dem Deploy Radarwerte ab.
+            Wenn aktiviert, führt der Node kurz nach dem Deploy einen initialen Abruf durch.
+            Ein vollständiges Deploy stellt sicher, dass die Node-Instanz neu erzeugt wird.
         </dd>
 
-        <dt>Ausgabe-Optionen</dt>
+        <dt>Ausgabeoptionen</dt>
         <dd>
-            Steuert den Aufbau von <code>msg.payload</code>:
+            Legt fest, welche Teile der Daten in <code>msg.payload</code> enthalten sind:
             <ul>
-                <li><b>Zusammenfassung</b> – aggregierte Kennwerte (Max/Ø, Abdeckung)</li>
-                <li><b>Vollständiges Raster</b> – vollauflösendes Niederschlagsraster (kann groß sein)</li>
-                <li><b>Bild (PNG/Base64)</b> – kodiertes Radarbild für Dashboards oder Templates</li>
+                <li><b>Zusammenfassung ausgeben</b> – aggregierte Niederschlagsinformationen.</li>
+                <li><b>Gesamtes Raster ausgeben</b> – Raster mit Breite, Höhe und Werten.</li>
+                <li><b>Bild (PNG/Base64) ausgeben</b> – für zukünftige Erweiterungen vorgesehen.</li>
             </ul>
         </dd>
 
         <dt>Diagnose</dt>
         <dd>
-            Bei Aktivierung schreibt der Node zusätzliche Diagnoseinformationen ins Node-RED-Log.
+            Wenn aktiviert, schreibt der Node zusätzliche Diagnoseinformationen in das Node-RED-Log.
+            Das ist besonders während der Entwicklung und Fehlersuche hilfreich.
         </dd>
     </dl>
 
     <h3>Eingänge</h3>
     <p>
-        Jede eingehende Nachricht löst einen Abruf der Radardaten für die
-        konfigurierte Region aus. Der Inhalt der Nachricht wird in der
-        Anfangsversion nicht ausgewertet und dient nur als Trigger.
+        Jeder eingehende Nachrichten-Trigger löst einen Abruf mit der aktuellen Konfiguration aus.
+        Der Inhalt der Eingangs-Nachricht wird in der ersten Version nicht ausgewertet.
     </p>
 
     <h3>Ausgänge</h3>
     <p>
-        Der Node erzeugt eine Nachricht mit den Radarinformationen:
+        Der Node gibt eine Nachricht aus, in der <code>msg.payload</code> die Regenradar-Daten
+        enthält. Die Struktur ist an die anderen DWD-Nodes (Pollen, Vorhersage, Warnungen)
+        angelehnt, sodass sich die Nodes leicht in Dashboards und Scorecards kombinieren lassen.
     </p>
-    <dl>
-        <dt>msg.payload.meta</dt>
-        <dd>
-            Metadaten wie Quelle, Zeitstempel und Modus.
-        </dd>
-
-        <dt>msg.payload.summary</dt>
-        <dd>
-            Vorhanden, wenn <b>Zusammenfassung</b> aktiviert ist. Enthält aggregierte
-            Information zur Niederschlagssituation im Interessensgebiet.
-        </dd>
-
-        <dt>msg.payload.grid</dt>
-        <dd>
-            Vorhanden, wenn <b>Vollständiges Raster</b> aktiviert ist. Enthält eine
-            Rasterdarstellung des Niederschlagsfeldes (Breite, Höhe, Werte).
-        </dd>
-
-        <dt>msg.payload.image</dt>
-        <dd>
-            Vorhanden, wenn <b>Bild (PNG/Base64)</b> aktiviert ist. Enthält ein
-            kodiertes Radarbild für Dashboards oder Templates.
-        </dd>
-    </dl>
 
     <h3>Status</h3>
     <p>
-        Der Node zeigt seinen Zustand über den Status unterhalb des Nodes an:
-    </p>
-    <ul>
-        <li><b>lade…</b> – Radardaten werden abgerufen</li>
-        <li><b>bereit</b> – wartet auf Eingänge oder Auto-Refresh</li>
-        <li><b>N Zellen</b> – Anzahl der Rasterzellen in letzter Auswertung</li>
-        <li><b>Fehler</b> – beim Abruf oder der Verarbeitung ist ein Fehler aufgetreten</li>
-    </ul>
-
-    <h3>Hinweise</h3>
-    <p>
-        Diese erste Version nutzt noch eine Platzhalter-Implementierung und
-        ruft die echten RADOLAN-Daten des DWD noch nicht ab. Eine zukünftige
-        Version wird die offiziellen OpenData-Radarendpunkte direkt anbinden.
+        Der Node nutzt Status-Texte, um den aktuellen Zustand anzuzeigen (Laden, bereit,
+        Anzahl der Zellen, Fehler usw.). Die Texte werden entsprechend der im Node-RED-Editor
+        eingestellten Sprache lokalisiert.
     </p>
 </script>

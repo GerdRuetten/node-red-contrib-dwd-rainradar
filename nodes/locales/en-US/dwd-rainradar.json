@@ -1,50 +1,40 @@
 {
-  "paletteLabel": "DWD Rain Radar",
-
-  "label": {
-    "defaultName": "DWD Rain Radar",
-    "name": "Name",
-    "mode": "Area mode",
-    "modeDe": "Whole Germany",
-    "modeBbox": "Bounding box",
-    "modePoint": "Point + radius",
-    "latMin": "Min latitude",
-    "latMax": "Max latitude",
-    "lonMin": "Min longitude",
-    "lonMax": "Max longitude",
-    "lat": "Latitude",
-    "lon": "Longitude",
-    "radius": "Radius (km)",
-    "autoRefresh": "Auto-refresh (sec)",
-    "fetchOnDeploy": "Fetch on deploy",
-    "outputOptions": "Output options",
-    "outputSummary": "Summary",
-    "outputGrid": "Full grid",
-    "outputImage": "Image (PNG/Base64)",
-    "diag": "Diagnostics"
-  },
-
-  "ui": {
-    "modeTip": "Choose how to define the area of interest.",
-    "bboxTip": "Bounding box in decimal degrees (WGS84).",
-    "pointTip": "Center coordinate in decimal degrees (WGS84).",
-    "autoRefreshTip": "Interval in seconds. 0 = disabled.",
-    "summaryTip": "Aggregated values like max/avg/coverage.",
-    "gridTip": "Full resolution grid – may be large in size.",
-    "imageTip": "Base64 PNG for dashboards or UI templates.",
-    "diagTip": "Write additional diagnostics to the Node-RED log.",
-    "hintHeader": "Note",
-    "hintText": "Radar data is subject to quality control and may contain artefacts. Check the DWD documentation for details."
-  },
-
-  "runtime": {
-    "statusLoading": "loading…",
-    "statusReady": "ready",
-    "statusOk": "__count__ cells",
-    "statusError": "error",
-
-    "errorFetch": "Error fetching radar data: __error__",
-    "errorParse": "Error parsing radar data: __error__",
-    "errorConfig": "Invalid configuration: __error__"
+  "dwd-rainradar": {
+    "label": {
+      "name": "Name",
+      "defaultName": "DWD Rain Radar",
+      "mode": "Area mode",
+      "modeDe": "Whole Germany",
+      "modeBbox": "Bounding box",
+      "modePoint": "Point + radius",
+      "latMin": "Min latitude",
+      "latMax": "Max latitude",
+      "lonMin": "Min longitude",
+      "lonMax": "Max longitude",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "radius": "Radius (km)",
+      "autoRefresh": "Auto-refresh (sec)",
+      "fetchOnDeploy": "Fetch on deploy",
+      "outputSummary": "Output summary",
+      "outputGrid": "Output full grid",
+      "outputImage": "Output image (PNG/Base64)",
+      "backendUrl": "Backend URL",
+      "diag": "Diagnostics (log debug information)"
+    },
+    "placeholder": {
+      "name": "Optional node name",
+      "backendUrl": "Leave empty to use built-in dummy"
+    },
+    "help": {
+      "backendUrl": "Optional HTTP endpoint that returns rain radar data as JSON. If empty, an internal dummy implementation is used."
+    },
+    "runtime": {
+      "statusLoading": "loading…",
+      "statusReady": "ready",
+      "statusOk": "__count__ cells",
+      "statusError": "error",
+      "errorFetch": "DWD rain radar error: {error}"
+    }
   }
 }
